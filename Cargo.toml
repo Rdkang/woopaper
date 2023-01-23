@@ -6,4 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-wallpaper = { version = "3" }
+wallpaper = "3.2"
+walkdir = "2.3.2"
+rand = "0.8.5"
