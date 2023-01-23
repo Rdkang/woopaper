@@ -3,9 +3,9 @@
 #![allow(unused_imports)]
 
 use rand::seq::SliceRandom;
+use std::process::Command;
 use std::vec;
 use walkdir::WalkDir;
-use wallpaper;
 
 fn main() {
     let path = "/home/rdkang/Pictures/Wallpapers/";
@@ -20,15 +20,22 @@ fn main() {
     }
 
     let choice: &walkdir::DirEntry = files.choose(&mut rand::thread_rng()).unwrap();
-    print!("{:?}", choice);
+    // print!("{:?}", choice);
+    set_wallpaper(choice);
 }
 
 fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
 
-fn set_wallpaper() {
-    // println!("{:?}", wallpaper::get());
-    // wallpaper::set_from_path("/home/rdkang/Pictures/Wallpapers/islandDay.jpg").unwrap();
-    // println!("{:?}", wallpaper::get());
+fn set_wallpaper(path: &walkdir::DirEntry) {
+    Command::new("gsettings")
+        .args(&[
+            "set",
+            "org.gnome.desktop.background",
+            "picture-uri-dark",
+            &path.path().display().to_string(),
+        ])
+        .output()
+        .unwrap();
 }
