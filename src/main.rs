@@ -3,8 +3,10 @@
 #![allow(unused_imports)]
 
 use rand::seq::SliceRandom;
+use std::fmt::Arguments;
 use std::process::Command;
 use std::vec;
+use std::{fmt, fs};
 use walkdir::WalkDir;
 
 fn main() {
@@ -35,6 +37,43 @@ fn set_wallpaper(path: &walkdir::DirEntry) {
             "org.gnome.desktop.background",
             "picture-uri-dark",
             &path.path().display().to_string(),
+        ])
+        .output()
+        .unwrap();
+}
+
+enum WallpaperMode {
+    None,
+    Wallpaper,
+    Centered,
+    Scaled,
+    Stretched,
+    Zoom,
+    Spanned,
+}
+
+impl fmt::Display for WallpaperMode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            // when call .to_string() on it will make it this path string
+            WallpaperMode::None => write!(f, "none"),
+            WallpaperMode::Wallpaper => write!(f, "wallpaper"),
+            WallpaperMode::Centered => write!(f, "centered"),
+            WallpaperMode::Scaled => write!(f, "scaled"),
+            WallpaperMode::Stretched => write!(f, "stretched"),
+            WallpaperMode::Zoom => write!(f, "zoom"),
+            WallpaperMode::Spanned => write!(f, "spanned"),
+        }
+    }
+}
+
+fn set_wallpaper_mode(mode: WallpaperMode) {
+    Command::new("gsettings")
+        .args(&[
+            "set",
+            "org.gnome.desktop.background ",
+            "picture-options",
+            &mode.to_string(),
         ])
         .output()
         .unwrap();
