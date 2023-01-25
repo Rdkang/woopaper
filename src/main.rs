@@ -5,10 +5,9 @@
 use colored::*;
 use opener::open;
 use rand::seq::SliceRandom;
-use std::fmt::Arguments;
+use std::fmt;
 use std::process::Command;
-use std::vec;
-use std::{fmt, fs};
+use trash;
 use walkdir::WalkDir;
 
 fn main() {
@@ -93,3 +92,8 @@ fn set_wallpaper_mode(mode: WallpaperMode) {
         .output()
         .unwrap();
 }
+
+fn open_file(file: String) {
+    open(file).unwrap();
+}
+

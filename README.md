@@ -10,9 +10,9 @@ https://github.com/reujab/wallpaper.rs
 - [ ] TODO: random
 - [ ] TODO: favorite
 - [ ] TODO: fuzzy
-- [ ] TODO: sxiv
+- [x] TODO: sxiv
 - [ ] TODO: fuzzyFavorite
 - [ ] TODO: favoriteSxiv
-- [ ] TODO: trash
+- [x] TODO: trash
 - [ ] TODO: file manager
 - [ ] TODO: path
