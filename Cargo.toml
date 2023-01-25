@@ -8,3 +8,7 @@ edition = "2021"
 [dependencies]
 walkdir = "2.3.2"
 rand = "0.8.5"
+opener = "0.5.0"
+colored = "2"
+# notify-rust = "4.6"
+

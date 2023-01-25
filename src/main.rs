@@ -2,6 +2,8 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 
+use colored::*;
+use opener::open;
 use rand::seq::SliceRandom;
 use std::fmt::Arguments;
 use std::process::Command;
@@ -14,7 +16,7 @@ fn main() {
 
     // lists all files and not directory
     let mut files: Vec<walkdir::DirEntry> = Vec::new();
-    for file in WalkDir::new(&path).into_iter().filter_map(|file| file.ok()) {
+    for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
         if file.metadata().unwrap().is_file() {
             // println!("{}", file.path().display());
             files.push(file);
@@ -22,17 +24,22 @@ fn main() {
     }
 
     let choice: &walkdir::DirEntry = files.choose(&mut rand::thread_rng()).unwrap();
-    // print!("{:?}", choice);
     set_wallpaper(choice);
+    set_wallpaper_mode(WallpaperMode::Wallpaper);
+    get_wallpaper();
 }
 
 fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
 
+fn print(text: ColoredString) {
+    println!("{}", text)
+}
+
 fn set_wallpaper(path: &walkdir::DirEntry) {
     Command::new("gsettings")
-        .args(&[
+        .args([
             "set",
             "org.gnome.desktop.background",
             "picture-uri-dark",
@@ -40,6 +47,14 @@ fn set_wallpaper(path: &walkdir::DirEntry) {
         ])
         .output()
         .unwrap();
+}
+
+fn get_wallpaper() -> String {
+    let current_wallpaper = Command::new("gsettings")
+        .args(["get", "org.gnome.desktop.background", "picture-uri-dark"])
+        .output()
+        .unwrap();
+    String::from_utf8_lossy(&current_wallpaper.stdout).to_string()
 }
 
 enum WallpaperMode {
@@ -69,7 +84,7 @@ impl fmt::Display for WallpaperMode {
 
 fn set_wallpaper_mode(mode: WallpaperMode) {
     Command::new("gsettings")
-        .args(&[
+        .args([
             "set",
             "org.gnome.desktop.background ",
             "picture-options",
