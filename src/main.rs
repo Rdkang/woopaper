@@ -97,3 +97,6 @@ fn open_file(file: String) {
     open(file).unwrap();
 }
 
+fn delete_file(file: String) {
+    trash::delete(file).unwrap();
+}
