@@ -41,6 +41,11 @@ fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
 
+fn notify_current() {
+    let message = format!("<b>{}</b> in <b>{}</b>", get_filename(), get_parent_folder());
+    notify(&message, &get_wallpaper());
+}
+
 fn print(text: ColoredString) {
     println!("{}", text)
 }
