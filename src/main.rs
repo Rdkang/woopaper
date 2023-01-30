@@ -79,7 +79,17 @@ fn get_filename() -> String {
     return Path::new(&current_wallpaper)
         .file_name()
         .unwrap()
-        .to_os_string()
+        .to_string_lossy()
+        .to_string();
+}
+
+fn get_parent_folder() -> String {
+    let current_wallpaper = get_wallpaper();
+    return Path::new(&current_wallpaper)
+        .parent()
+        .unwrap()
+        .file_name()
+        .unwrap()
         .to_string_lossy()
         .to_string();
 }
@@ -127,4 +137,14 @@ fn open_file(file: String) {
 
 fn delete_file(file: String) {
     trash::delete(file).unwrap();
+}
+
+fn notify(body: &str) {
+    Notification::new()
+        .summary("Woopaper")
+        .appname("Woopaper")
+        .body(body)
+        .icon("org.gnome.wallpaper")
+        .show()
+        .unwrap();
 }
