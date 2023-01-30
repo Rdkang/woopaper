@@ -1,11 +1,12 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
-#![allow(unused_imports)]
+// #![allow(unused_imports)]
 
 use colored::*;
 use opener::open;
 use rand::seq::SliceRandom;
 use std::fmt;
+use std::path::Path;
 use std::process::Command;
 use trash;
 use walkdir::WalkDir;
@@ -23,9 +24,14 @@ fn main() {
     }
 
     let choice: &walkdir::DirEntry = files.choose(&mut rand::thread_rng()).unwrap();
-    set_wallpaper(choice);
-    set_wallpaper_mode(WallpaperMode::Wallpaper);
-    get_wallpaper();
+    // set_wallpaper(choice);
+    // set_wallpaper_mode(WallpaperMode::Wallpaper);
+    print(get_wallpaper().blue());
+    print(get_filename().red());
+
+    // let wallpaper: String = get_wallpaper();
+    // let current: &Path = Path::new(&wallpaper);
+    // print!("{:?}", &current.file_name());
 }
 
 fn print_type_of<T>(_: &T) {
@@ -46,6 +52,15 @@ fn set_wallpaper(path: &walkdir::DirEntry) {
         ])
         .output()
         .unwrap();
+    Command::new("gsettings")
+        .args([
+            "set",
+            "org.gnome.desktop.background",
+            "picture-uri",
+            &path.path().display().to_string(),
+        ])
+        .output()
+        .unwrap();
 }
 
 fn get_wallpaper() -> String {
@@ -54,6 +69,16 @@ fn get_wallpaper() -> String {
         .output()
         .unwrap();
     String::from_utf8_lossy(&current_wallpaper.stdout).to_string()
+}
+
+fn get_filename() -> String {
+    let current_wallpaper = get_wallpaper();
+    return Path::new(&current_wallpaper)
+        .file_name()
+        .unwrap()
+        .to_os_string()
+        .to_string_lossy()
+        .to_string();
 }
 
 enum WallpaperMode {
