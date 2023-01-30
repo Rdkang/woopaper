@@ -150,12 +150,13 @@ fn delete_file(file: String) {
     trash::delete(file).unwrap();
 }
 
-fn notify(body: &str) {
+fn notify(body: &str, image: &str) {
     Notification::new()
         .summary("Woopaper")
         .appname("Woopaper")
         .body(body)
         .icon("org.gnome.wallpaper")
+        .image_path(image)
         .show()
         .unwrap();
 }
