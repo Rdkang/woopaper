@@ -1,7 +1,8 @@
 #![allow(dead_code)]
-#![allow(unused_variables)]
+// #![allow(unused_variables)]
 // #![allow(unused_imports)]
 
+use clap::{Parser, Subcommand, ValueEnum};
 use colored::*;
 use notify_rust::Notification;
 use opener::open;
@@ -12,29 +13,77 @@ use std::process::Command;
 use trash;
 use walkdir::WalkDir;
 
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+#[command(propagate_version = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: What,
+}
+
+#[derive(Subcommand)]
+enum What {
+    #[command(arg_required_else_help = true)]
+    Wallpaper {
+        // #[arg(value_name = "Command")]
+        option: Commands,
+    },
+    #[command(arg_required_else_help = true)]
+    Setter {
+        // #[arg(default_value = Commands::Rofi)]
+        option: Commands,
+    },
+}
+
+#[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
+enum Commands {
+    /// sets a random wallpaper
+    Random,
+    /// Shows the current wallpaper
+    Status,
+    /// Puts current wallpaper in the trash
+    Trash,
+    /// Opens current wallpaper in file manager
+    Manager,
+    /// Opens 20 wallpapers in sxiv
+    Sxiv,
+}
+
 fn main() {
-    let path = "/home/rdkang/Pictures/Wallpapers/";
-
-    // lists all files and not directory
-    let mut files: Vec<walkdir::DirEntry> = Vec::new();
-    for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
-        if file.metadata().unwrap().is_file() {
-            // println!("{}", file.path().display());
-            files.push(file);
-        }
-    }
-
-    let choice: &walkdir::DirEntry = files.choose(&mut rand::thread_rng()).unwrap();
-    // set_wallpaper(choice);
-    // set_wallpaper_mode(WallpaperMode::Wallpaper);
     print(get_wallpaper().blue());
-    print(get_filename().red());
 
-    let wallpaper: String = get_wallpaper();
-    let current: &Path = Path::new(&wallpaper);
+    let arguments = Cli::parse();
+    let path: &str = "/home/rdkang/Pictures/Wallpapers/";
+    match arguments.command {
+        What::Wallpaper { option } => match option {
+            Commands::Random => {
+                // TODO: make this into a function
+                // lists all files and not directory
+                let mut files: Vec<walkdir::DirEntry> = Vec::new();
+                for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
+                    if file.metadata().unwrap().is_file() {
+                        // println!("{}", file.path().display());
+                        files.push(file);
+                    }
+                }
 
-    let message = format!("current wallpaper is {} in {}", get_filename(), get_parent_folder());
-    notify(&message);
+                let choice = files.choose(&mut rand::thread_rng()).unwrap();
+
+                set_wallpaper(&choice);
+                set_wallpaper_mode(WallpaperMode::Wallpaper);
+            }
+            Commands::Status => notify_current(),
+            Commands::Trash => trash_file(get_wallpaper()),
+            Commands::Manager => {
+                Command::new("nautilus").args([&get_wallpaper()]).output().unwrap();
+            }
+
+            _ => print("this".blue()),
+        },
+        What::Setter { option } => match option {
+            _ => print("this is the setter".yellow()),
+        },
+    }
 }
 
 fn print_type_of<T>(_: &T) {
