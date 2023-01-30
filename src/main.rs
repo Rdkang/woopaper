@@ -146,8 +146,19 @@ fn open_file(file: String) {
     open(file).unwrap();
 }
 
-fn delete_file(file: String) {
-    trash::delete(file).unwrap();
+fn trash_file(file: String) {
+    let file_temp = file.clone();
+    match trash::delete(file) {
+        Ok(_fc) => {
+            print(format!("Sucess putting {} in the trash", file_temp.magenta()).green());
+
+            let message = format!("trashed {} in {}", get_filename(), get_parent_folder());
+            // FIX: show image of deleted
+            notify(&message, &file_temp)
+        }
+        Err(error) => panic!("{} trouble trashing file", error),
+    }
+    // TODO: make it set new wallpaper after removing
 }
 
 fn notify(body: &str, image: &str) {

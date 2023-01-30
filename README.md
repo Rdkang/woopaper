@@ -7,12 +7,13 @@ https://github.com/reujab/wallpaper.rs
 
 
 ### Roadmap
-- [ ] TODO: random
 - [ ] TODO: favorite
 - [ ] TODO: fuzzy
-- [x] TODO: sxiv
 - [ ] TODO: fuzzyFavorite
 - [ ] TODO: favoriteSxiv
-- [x] TODO: trash
-- [ ] TODO: file manager
-- [ ] TODO: path
+- [x] DONE: file manager
+- [x] DONE: random
+- [x] DONE: trash
+- [x] DONE: sxiv
+- [x] DONE: path
+- [x] DONE: notifications
