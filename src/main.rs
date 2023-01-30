@@ -76,7 +76,13 @@ fn get_wallpaper() -> String {
         .args(["get", "org.gnome.desktop.background", "picture-uri-dark"])
         .output()
         .unwrap();
-    String::from_utf8_lossy(&current_wallpaper.stdout).to_string()
+    String::from_utf8_lossy(&current_wallpaper.stdout)
+        .trim()
+        .strip_suffix("'")
+        .unwrap()
+        .strip_prefix("'")
+        .unwrap()
+        .to_string()
 }
 
 fn get_filename() -> String {
