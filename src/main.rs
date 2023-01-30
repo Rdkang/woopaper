@@ -3,6 +3,7 @@
 // #![allow(unused_imports)]
 
 use colored::*;
+use notify_rust::Notification;
 use opener::open;
 use rand::seq::SliceRandom;
 use std::fmt;
@@ -29,9 +30,11 @@ fn main() {
     print(get_wallpaper().blue());
     print(get_filename().red());
 
-    // let wallpaper: String = get_wallpaper();
-    // let current: &Path = Path::new(&wallpaper);
-    // print!("{:?}", &current.file_name());
+    let wallpaper: String = get_wallpaper();
+    let current: &Path = Path::new(&wallpaper);
+
+    let message = format!("current wallpaper is {} in {}", get_filename(), get_parent_folder());
+    notify(&message);
 }
 
 fn print_type_of<T>(_: &T) {

@@ -11,5 +11,4 @@ rand = "0.8.5"
 opener = "0.5.0"
 colored = "2"
 trash = "3.0.0"
-# notify-rust = "4.6"
-
+notify-rust = "4.6"
