@@ -74,16 +74,16 @@ fn main() {
             }
             Commands::Status => notify_current(),
             Commands::Trash => trash_file(get_wallpaper()),
-            Commands::Manager => {
-                Command::new("nautilus").args([&get_wallpaper()]).output().unwrap();
-            }
-
-            _ => print("this".blue()),
+            Commands::Manager => open_in_file_manger(get_wallpaper()),
         },
         What::Setter { option } => match option {
             _ => print("this is the setter".yellow()),
         },
     }
+}
+
+fn open_in_file_manger(file: String) {
+    Command::new("nautilus").args([file]).output().unwrap();
 }
 
 fn print_type_of<T>(_: &T) {
