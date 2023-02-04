@@ -10,7 +10,6 @@ use rand::seq::SliceRandom;
 use std::fmt;
 use std::path::Path;
 use std::process::Command;
-use trash;
 use walkdir::WalkDir;
 
 #[derive(Parser)]
@@ -46,7 +45,10 @@ enum Commands {
     /// Opens current wallpaper in file manager
     Manager,
     /// Opens 20 wallpapers in sxiv
+    //TOOD:
     Sxiv,
+    /// Opens image in default image viewer
+    Viewer,
 }
 
 fn main() {
@@ -75,6 +77,8 @@ fn main() {
             Commands::Status => notify_current(),
             Commands::Trash => trash_file(get_wallpaper()),
             Commands::Manager => open_in_file_manger(get_wallpaper()),
+            Commands::Sxiv => open_file(get_wallpaper()),
+            Commands::Viewer => open_file(get_wallpaper()),
         },
         What::Setter { option } => match option {
             _ => print("this is the setter".yellow()),
@@ -215,8 +219,18 @@ fn notify(body: &str, image: &str) {
         .summary("Woopaper")
         .appname("Woopaper")
         .body(body)
+        .hint(notify_rust::Hint::Transient(true))
         .icon("org.gnome.wallpaper")
         .image_path(image)
+        .action("trash", "Put image in trash")
+        .action("manager", "Open in file manager")
+        .action("open", "Open in image viewer")
         .show()
-        .unwrap();
+        .unwrap()
+        .wait_for_action(|action| match action {
+            "trash" => trash_file(get_wallpaper()),
+            "manager" => open_in_file_manger(get_wallpaper()),
+            "open" => open_file(get_wallpaper()),
+            _ => print("default".blue()),
+        });
 }
