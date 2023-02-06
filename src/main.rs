@@ -18,21 +18,18 @@ use walkdir::WalkDir;
 #[command(propagate_version = true)]
 struct Cli {
     #[command(subcommand)]
-    command: What,
+    command: Choice,
 }
 
 #[derive(Subcommand)]
-enum What {
+enum Choice {
     #[command(arg_required_else_help = true)]
     Wallpaper {
         // #[arg(value_name = "Command")]
         option: Commands,
     },
     #[command(arg_required_else_help = true)]
-    Setter {
-        // #[arg(default_value = Commands::Rofi)]
-        option: Commands,
-    },
+    Open { option: OpenChoices },
 }
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
@@ -43,6 +40,10 @@ enum Commands {
     Status,
     /// Puts current wallpaper in the trash
     Trash,
+}
+
+#[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
+enum OpenChoices {
     /// Opens current wallpaper in file manager
     Manager,
     /// Opens 20 wallpapers in sxiv
@@ -51,7 +52,6 @@ enum Commands {
     /// Opens image in default image viewer
     Viewer,
 }
-
 fn main() {
     print(get_wallpaper().blue());
     let path: &str = "/home/rdkang/Pictures/Wallpapers/";
@@ -60,10 +60,11 @@ fn main() {
 
     let arguments = Cli::parse();
     match arguments.command {
-        What::Wallpaper { option } => match option {
+        Choice::Wallpaper { option } => match option {
             Commands::Random => {
                 // TODO: make this into a function
                 // lists all files and not directory
+
                 let mut files: Vec<walkdir::DirEntry> = Vec::new();
                 for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
                     if file.metadata().unwrap().is_file() {
@@ -72,7 +73,6 @@ fn main() {
                 }
 
                 let choice = files.choose(&mut rand::thread_rng()).unwrap();
-
                 if image_size_check(choice.path().display().to_string(), width, height) {
                     set_wallpaper(choice);
                     set_wallpaper_mode(WallpaperMode::Zoom);
@@ -83,12 +83,11 @@ fn main() {
             }
             Commands::Status => notify_current(),
             Commands::Trash => trash_file(get_wallpaper()),
-            Commands::Manager => open_in_file_manger(get_wallpaper()),
-            Commands::Sxiv => open_file(get_wallpaper()),
-            Commands::Viewer => open_file(get_wallpaper()),
         },
-        What::Setter { option } => match option {
-            _ => print("this is the setter".yellow()),
+        Choice::Open { option } => match option {
+            OpenChoices::Manager => open_in_file_manger(get_wallpaper()),
+            OpenChoices::Sxiv => open_file(get_wallpaper()),
+            OpenChoices::Viewer => open_file(get_wallpaper()),
         },
     }
 }
