@@ -4,6 +4,7 @@
 
 use clap::{Parser, Subcommand, ValueEnum};
 use colored::*;
+use imagesize::size;
 use notify_rust::Notification;
 use opener::open;
 use rand::seq::SliceRandom;
@@ -53,9 +54,11 @@ enum Commands {
 
 fn main() {
     print(get_wallpaper().blue());
+    let path: &str = "/home/rdkang/Pictures/Wallpapers/";
+    let width: usize = 1080;
+    let height: usize = 1920;
 
     let arguments = Cli::parse();
-    let path: &str = "/home/rdkang/Pictures/Wallpapers/";
     match arguments.command {
         What::Wallpaper { option } => match option {
             Commands::Random => {
@@ -64,15 +67,19 @@ fn main() {
                 let mut files: Vec<walkdir::DirEntry> = Vec::new();
                 for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
                     if file.metadata().unwrap().is_file() {
-                        // println!("{}", file.path().display());
                         files.push(file);
                     }
                 }
 
                 let choice = files.choose(&mut rand::thread_rng()).unwrap();
 
-                set_wallpaper(&choice);
-                set_wallpaper_mode(WallpaperMode::Wallpaper);
+                if image_size_check(choice.path().display().to_string(), width, height) {
+                    set_wallpaper(choice);
+                    set_wallpaper_mode(WallpaperMode::Zoom);
+                } else {
+                    // TODO:  refactor to recursion
+                    notify("Image is not the right size", &get_wallpaper());
+                }
             }
             Commands::Status => notify_current(),
             Commands::Trash => trash_file(get_wallpaper()),
@@ -83,6 +90,23 @@ fn main() {
         What::Setter { option } => match option {
             _ => print("this is the setter".yellow()),
         },
+    }
+}
+
+fn image_size_check(path: String, width_min: usize, height_min: usize) -> bool {
+    let (width, height) = match size(path) {
+        Ok(dim) => (dim.width, dim.height),
+        Err(why) => panic!("Error getting image size: {why}"),
+    };
+
+    if width <= width_min {
+        notify("Width is too small", &get_wallpaper());
+        false
+    } else if height <= height_min {
+        notify("Height is too small", &get_wallpaper());
+        false
+    } else {
+        true
     }
 }
 
