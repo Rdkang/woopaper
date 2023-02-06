@@ -114,7 +114,7 @@ fn open_in_file_manger(file: String) {
 }
 
 fn print_type_of<T>(_: &T) {
-    println!("{}", std::any::type_name::<T>())
+    println!("{}", std::any::type_name::<T>());
 }
 
 fn notify_current() {
@@ -123,7 +123,7 @@ fn notify_current() {
 }
 
 fn print(text: ColoredString) {
-    println!("{}", text)
+    println!("{text}");
 }
 
 fn set_wallpaper(path: &walkdir::DirEntry) {
@@ -154,9 +154,9 @@ fn get_wallpaper() -> String {
         .unwrap();
     String::from_utf8_lossy(&current_wallpaper.stdout)
         .trim()
-        .strip_suffix("'")
+        .strip_suffix('\'')
         .unwrap()
-        .strip_prefix("'")
+        .strip_prefix('\'')
         .unwrap()
         .to_string()
 }
@@ -232,7 +232,7 @@ fn trash_file(file: String) {
             // FIX: show image of deleted
             notify(&message, &file_temp)
         }
-        Err(error) => panic!("{} trouble trashing file", error),
+        Err(error) => panic!("{error} trouble trashing file"),
     }
     // TODO: make it set new wallpaper after removing
 }
