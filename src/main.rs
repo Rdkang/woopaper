@@ -78,7 +78,8 @@ fn main() {
                     set_wallpaper_mode(WallpaperMode::Zoom);
                 } else {
                     // TODO:  refactor to recursion
-                    notify("Image is not the right size", &get_wallpaper());
+                    // notify("Image is not the right size", &get_wallpaper());
+                    print("temp".yellow());
                 }
             }
             Commands::Status => notify_current(),
@@ -129,7 +130,11 @@ fn print_type_of<T>(_: &T) {
 }
 
 fn notify_current() {
-    let message = format!("<b>{}</b> in <b>{}</b>", get_filename(), get_parent_folder());
+    let message = format!(
+        "<b>{}</b> in <b>{}</b>",
+        get_filename(get_wallpaper()),
+        get_parent_folder(get_wallpaper())
+    );
     notify(&message, &get_wallpaper());
 }
 
@@ -172,8 +177,8 @@ fn get_wallpaper() -> String {
         .to_string()
 }
 
-fn get_filename() -> String {
-    let current_wallpaper = get_wallpaper();
+fn get_filename(path: String) -> String {
+    let current_wallpaper = path;
     return Path::new(&current_wallpaper)
         .file_name()
         .unwrap()
@@ -181,8 +186,8 @@ fn get_filename() -> String {
         .to_string();
 }
 
-fn get_parent_folder() -> String {
-    let current_wallpaper = get_wallpaper();
+fn get_parent_folder(path: String) -> String {
+    let current_wallpaper = path;
     return Path::new(&current_wallpaper)
         .parent()
         .unwrap()
@@ -239,8 +244,11 @@ fn trash_file(file: String) {
         Ok(_fc) => {
             print(format!("Sucess putting {} in the trash", file_temp.magenta()).green());
 
-            let message = format!("trashed {} in {}", get_filename(), get_parent_folder());
-            // FIX: show image of deleted
+            let message = format!(
+                "trashed {} in {}",
+                get_filename(get_wallpaper()),
+                get_parent_folder(get_wallpaper())
+            );
             notify(&message, &file_temp)
         }
         Err(error) => panic!("{error} trouble trashing file"),
