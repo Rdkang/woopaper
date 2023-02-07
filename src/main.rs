@@ -93,16 +93,27 @@ fn main() {
 }
 
 fn image_size_check(path: String, width_min: usize, height_min: usize) -> bool {
+    let path_temp = path.clone();
     let (width, height) = match size(path) {
         Ok(dim) => (dim.width, dim.height),
         Err(why) => panic!("Error getting image size: {why}"),
     };
 
     if width <= width_min {
-        notify("Width is too small", &get_wallpaper());
+        let message = format!(
+            "<b>{}</b> in <b>{}</b> Width is too small",
+            get_filename(path_temp.clone()),
+            get_parent_folder(path_temp.clone())
+        );
+        notify(&message, &path_temp);
         false
     } else if height <= height_min {
-        notify("Height is too small", &get_wallpaper());
+        let message = format!(
+            "<b>{}</b> in <b>{}</b> Height is too small",
+            get_filename(path_temp.clone()),
+            get_parent_folder(path_temp.clone())
+        );
+        notify(&message, &path_temp);
         false
     } else {
         true
