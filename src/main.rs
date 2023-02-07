@@ -44,8 +44,8 @@ enum Commands {
     Trash,
     /// Opens current wallpaper in file manager
     Manager,
-    /// Opens 20 wallpapers in sxiv
     //TOOD:
+    /// Opens 20 wallpapers in sxiv
     Sxiv,
     /// Opens image in default image viewer
     Viewer,
@@ -59,20 +59,12 @@ fn main() {
     match arguments.command {
         What::Wallpaper { option } => match option {
             Commands::Random => {
-                // TODO: make this into a function
-                // lists all files and not directory
-                let mut files: Vec<walkdir::DirEntry> = Vec::new();
-                for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
-                    if file.metadata().unwrap().is_file() {
-                        // println!("{}", file.path().display());
-                        files.push(file);
-                    }
-                }
+                let files = get_files(path);
+                // set_wallpaper(&get_random(files, 1));
+                print!("{:?}", get_random(files, 1));
 
-                let choice = files.choose(&mut rand::thread_rng()).unwrap();
-
-                set_wallpaper(&choice);
-                set_wallpaper_mode(WallpaperMode::Wallpaper);
+                // set_wallpaper(&choice);
+                // set_wallpaper_mode(WallpaperMode::Wallpaper);
             }
             Commands::Status => notify_current(),
             Commands::Trash => trash_file(get_wallpaper()),
@@ -84,6 +76,27 @@ fn main() {
             _ => print("this is the setter".yellow()),
         },
     }
+}
+
+fn get_files(path: &str) -> Vec<walkdir::DirEntry> {
+    // lists all files and not directories
+    let mut files: Vec<walkdir::DirEntry> = Vec::new();
+    for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
+        if file.metadata().unwrap().is_file() {
+            // println!("{}", file.path().display());
+            files.push(file);
+        }
+    }
+    files
+}
+
+fn get_random<'a>(files: Vec<walkdir::DirEntry>, amount: usize) -> Vec<&'a walkdir::DirEntry> {
+    let choice: Vec<_> = files
+        .choose_multiple(&mut rand::thread_rng(), amount)
+        .into_iter()
+        .collect();
+    choice
+    // println!("{:?}", choice);
 }
 
 fn open_in_file_manger(file: String) {

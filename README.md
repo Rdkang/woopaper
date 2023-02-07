@@ -1,5 +1,5 @@
 # woopaper
-improved in rust of https://github.com/Rdkang/chinguRandomWallpaper
+[chinguRandomWallpaper](https://github.com/Rdkang/chinguRandomWallpaper) improved in rust
 
 #### Resources
 https://github.com/vineetred/flowy/tree/master/wallpaper_rs
