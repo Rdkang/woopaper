@@ -282,9 +282,9 @@ fn notify(body: &str, image: &str) {
         .show()
         .unwrap()
         .wait_for_action(|action| match action {
-            "trash" => trash_file(get_wallpaper()),
-            "manager" => open_in_file_manger(get_wallpaper()),
-            "open" => open_file(get_wallpaper()),
-            _ => print("default".blue()),
+            "trash" => trash_file(image.to_string()),
+            "manager" => open_in_file_manger(image.to_string()),
+            "open" => open_file(image.to_string()),
+            _ => (),
         });
 }
