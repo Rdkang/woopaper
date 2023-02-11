@@ -13,7 +13,7 @@
 ## 🧐 About
 Wanted a way to change the wallpaper using keyboard shortuts
 
-improved in rust of [chinguRandomWallpaper](https://github.com/Rdkang/chinguRandomWallpaper)
+[chinguRandomWallpaper](https://github.com/Rdkang/chinguRandomWallpaper) improved in rust
 
 #### Resources
 https://github.com/vineetred/flowy/tree/master/wallpaper_rs
