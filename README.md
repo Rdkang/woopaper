@@ -16,7 +16,7 @@ Wanted a way to change the wallpaper using keyboard shortuts
 [chinguRandomWallpaper](https://github.com/Rdkang/chinguRandomWallpaper) improved in rust
 
 ## Features
-    - Notification with current wallpaper and can click on it for common actions such as [trash,open in file manager, open in image viewer]
+- Notification with current wallpaper and can click on it for common actions such as [trash,open in file manager, open in image viewer]
 
 #### Resources
 https://github.com/vineetred/flowy/tree/master/wallpaper_rs
