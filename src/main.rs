@@ -59,12 +59,9 @@ fn main() {
     match arguments.command {
         What::Wallpaper { option } => match option {
             Commands::Random => {
-                let files = get_files(path);
-                // set_wallpaper(&get_random(files, 1));
-                print!("{:?}", get_random(files, 1));
-
-                // set_wallpaper(&choice);
-                // set_wallpaper_mode(WallpaperMode::Wallpaper);
+                let files_random = get_random(get_files(path), 8);
+                set_wallpaper(&files_random[0]);
+                set_wallpaper_mode(WallpaperMode::Zoom);
             }
             Commands::Status => notify_current(),
             Commands::Trash => trash_file(get_wallpaper()),
@@ -79,24 +76,19 @@ fn main() {
 }
 
 fn get_files(path: &str) -> Vec<walkdir::DirEntry> {
-    // lists all files and not directories
+    // lists all files excluding directories
     let mut files: Vec<walkdir::DirEntry> = Vec::new();
     for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
         if file.metadata().unwrap().is_file() {
-            // println!("{}", file.path().display());
             files.push(file);
         }
     }
     files
 }
 
-fn get_random<'a>(files: Vec<walkdir::DirEntry>, amount: usize) -> Vec<&'a walkdir::DirEntry> {
-    let choice: Vec<_> = files
-        .choose_multiple(&mut rand::thread_rng(), amount)
-        .into_iter()
-        .collect();
+fn get_random(files: Vec<walkdir::DirEntry>, num: usize) -> Vec<walkdir::DirEntry> {
+    let choice = files.choose_multiple(&mut rand::thread_rng(), num).cloned().collect();
     choice
-    // println!("{:?}", choice);
 }
 
 fn open_in_file_manger(file: String) {
