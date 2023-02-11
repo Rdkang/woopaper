@@ -53,23 +53,12 @@ enum OpenChoices {
     Viewer,
 }
 fn main() {
-    print(get_wallpaper().blue());
-    let path: &str = "/home/rdkang/Pictures/Wallpapers/";
-    let width: usize = 1080;
-    let height: usize = 1920;
+    print(get_wallpaper().magenta());
 
     let arguments = Cli::parse();
     match arguments.command {
         Choice::Wallpaper { option } => match option {
-            Commands::Random => {
-                let files_random = get_random(get_files(path), 8);
-                if image_size_check(files_random[0].path().display().to_string(), width, height) {
-                    set_wallpaper(&files_random[0]);
-                    set_wallpaper_mode(WallpaperMode::Zoom);
-                } else {
-                    print("temp".yellow());
-                }
-            }
+            Commands::Random => set_random(),
             Commands::Status => notify_current(),
             Commands::Trash => trash_file(get_wallpaper()),
         },
@@ -81,32 +70,51 @@ fn main() {
     }
 }
 
-fn image_size_check(path: String, width_min: usize, height_min: usize) -> bool {
+fn set_random() {
+    // TODO: add config file
+    let path: &str = "/home/rdkang/Pictures/Wallpapers/";
+    let width: usize = 1920;
+    let height: usize = 1080;
+    let files_random = get_random(get_files(path), 1);
+
+    if image_size_check(files_random[0].path().display().to_string(), width, height, false) {
+        set_wallpaper(&files_random[0]);
+        set_wallpaper_mode(WallpaperMode::Zoom);
+    } else {
+        set_random();
+    }
+}
+
+// TODO: notify_problem to user config
+fn image_size_check(path: String, width_min: usize, height_min: usize, notify_problem: bool) -> bool {
     let path_temp = path.clone();
     let (width, height) = match size(path) {
         Ok(dim) => (dim.width, dim.height),
         Err(why) => panic!("Error getting image size: {why}"),
     };
 
-    if width <= width_min {
-        let message = format!(
+    let message = if width <= width_min {
+        format!(
             "<b>{}</b> in <b>{}</b> Width is too small",
             get_filename(path_temp.clone()),
             get_parent_folder(path_temp.clone())
-        );
-        notify(&message, &path_temp);
-        false
+        )
     } else if height <= height_min {
-        let message = format!(
+        format!(
             "<b>{}</b> in <b>{}</b> Height is too small",
             get_filename(path_temp.clone()),
             get_parent_folder(path_temp.clone())
-        );
-        notify(&message, &path_temp);
-        false
+        )
     } else {
-        true
+        format!("good")
+    };
+
+    if message != "good" && notify_problem {
+        notify(&message, &path_temp);
+        print(message.yellow());
+        return false;
     }
+    true
 }
 
 fn get_files(path: &str) -> Vec<walkdir::DirEntry> {
@@ -257,7 +265,7 @@ fn trash_file(file: String) {
         }
         Err(error) => panic!("{error} trouble trashing file"),
     }
-    // TODO: make it set new wallpaper after removing
+    set_random()
 }
 
 fn notify(body: &str, image: &str) {
