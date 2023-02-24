@@ -11,9 +11,44 @@
 ---
 
 ## 🧐 About
-Wanted a way to change the wallpaper using keyboard shortuts
+Woopaper is a program written in Rust that allows you to change your wallpaper quickly and easily using keyboard shortcuts or the command line. It also includes features such as showing the current wallpaper as a notification, and easily deleting the image or opening it in the default image viewer.
 
-[chinguRandomWallpaper](https://github.com/Rdkang/chinguRandomWallpaper) improved in rust
+This program's predecessor is [chinguRandomWallpaper](https://github.com/Rdkang/chinguRandomWallpaper) and have decided to improve it in rust
+
+## Usage
+Woopaper has two subcommands: `open` and `wallpaper`.
+`open` subcommand
+
+The open subcommand allows you to open the current wallpaper in a specified image viewer. The following flags are available:
+- `manager`: Opens the wallpaper directory in your file manager.
+- `sxiv`: Opens the wallpaper in the sxiv image viewer.
+- `viewer`: Opens the wallpaper in the default image viewer.
+
+Example usage:
+
+will open the current wallpaper in your default file manager so that you can do what you want with it
+```bash
+woopaper open manager
+```
+
+`wallpaper` subcommand
+
+The wallpaper subcommand allows you to change the wallpaper and perform other actions related to wallpapers. The following flags are available:
+
+- `random`: Sets a random wallpaper from the wallpaper directory.
+- `status`: Shows the current wallpaper and its file path.
+- `trash`: Moves the current wallpaper to the trash directory.
+
+Example usage:
+
+will set a random wallpaper
+```bash
+woopaper wallpaper random
+```
+
+By default, the program will use the `~/Pictures/Wallpapers/` directory to store wallpapers. You can change this directory by modifying the `WALLPAPER_DIR` constant in the `src/main.rs` file.*
+
+**todo: will be possible to set this in a config file*
 
 ## Features
 
