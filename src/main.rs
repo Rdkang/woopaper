@@ -72,12 +72,15 @@ fn main() {
     }
 }
 
+fn get_path() -> String {
+    "/home/rdkang/Pictures/Wallpapers/".to_string()
+}
+
 fn set_random() {
     // TODO: add config file
-    let path: &str = "/home/rdkang/Pictures/Wallpapers/";
     let width: usize = 1920;
     let height: usize = 1080;
-    let files_random = get_random(get_files(path), 1);
+    let files_random = get_random(get_files(get_path()), 1);
 
     if image_size_check(files_random[0].path().display().to_string(), width, height, false) {
         set_wallpaper(&files_random[0]);
@@ -119,7 +122,7 @@ fn image_size_check(path: String, width_min: usize, height_min: usize, notify_pr
     true
 }
 
-fn get_files(path: &str) -> Vec<walkdir::DirEntry> {
+fn get_files(path: String) -> Vec<walkdir::DirEntry> {
     // lists all files excluding directories
     let mut files: Vec<walkdir::DirEntry> = Vec::new();
     for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
