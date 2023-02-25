@@ -24,16 +24,18 @@ struct Cli {
 #[derive(Subcommand)]
 enum Choice {
     #[command(arg_required_else_help = true)]
+    /// Setting wallpaper operations
     Wallpaper {
         // #[arg(value_name = "Command")]
-        option: Commands,
+        option: WallpaperChoices,
     },
     #[command(arg_required_else_help = true)]
+    /// Opening the current wallpaper operations
     Open { option: OpenChoices },
 }
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
-enum Commands {
+enum WallpaperChoices {
     /// sets a random wallpaper
     Random,
     /// Shows the current wallpaper
@@ -58,9 +60,9 @@ fn main() {
     let arguments = Cli::parse();
     match arguments.command {
         Choice::Wallpaper { option } => match option {
-            Commands::Random => set_random(),
-            Commands::Status => notify_current(),
-            Commands::Trash => trash_file(get_wallpaper()),
+            WallpaperChoices::Random => set_random(),
+            WallpaperChoices::Status => notify_current(),
+            WallpaperChoices::Trash => trash_file(get_wallpaper()),
         },
         Choice::Open { option } => match option {
             OpenChoices::Manager => open_in_file_manger(get_wallpaper()),
