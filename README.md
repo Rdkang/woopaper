@@ -15,6 +15,24 @@ Woopaper is a program written in Rust that allows you to change your wallpaper q
 
 This program's predecessor is [chinguRandomWallpaper](https://github.com/Rdkang/chinguRandomWallpaper) and have decided to improve it in rust
 
+## Installation
+To build woopaper from scratch , you'll need to have Rust installed on your system. You can install Rust by following the instructions [here](https://www.rust-lang.org/tools/install).
+
+Once Rust is installed, you can download and compile the woopaper program by cloning this repository and running the following command:
+
+```bash
+git clone https://github.com/Rdkang/woopaper
+```
+- This will compile the wooclock program and create an executable file in the `target/release` directory. and could can put in your chosen location and run like any other program.
+```bash
+cargo build --release
+```
+
+- Or while in cloned directory do `cargo install --path .` which will install to your cargo home directory
+
+- Or just download the executable from the github's release page
+
+
 ## Usage
 Woopaper has two subcommands: `open` and `wallpaper`.
 `open` subcommand
