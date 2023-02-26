@@ -9,7 +9,7 @@ use notify_rust::Notification;
 use opener::open;
 use rand::seq::SliceRandom;
 use std::fmt;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use walkdir::WalkDir;
 extern crate confy;
@@ -58,9 +58,10 @@ enum OpenChoices {
     /// Opens image in default image viewer
     Viewer,
 }
+
 #[derive(Debug, Serialize, Deserialize)]
 struct ConfyConfig {
-    path: String,
+    path: PathBuf,
     height: usize,
     width: usize,
     notify_problem: bool,
@@ -69,7 +70,7 @@ struct ConfyConfig {
 impl Default for ConfyConfig {
     fn default() -> Self {
         ConfyConfig {
-            path: "~/Pictures/Wallpapers".to_string(),
+            path: PathBuf::from("/home/rdkang/Pictures/Wallpapers"),
             width: 1920,
             height: 1080,
             notify_problem: false,
@@ -107,7 +108,7 @@ fn main() {
     }
 }
 
-fn get_path() -> String {
+fn get_path() -> PathBuf {
     get_config().path
 }
 
@@ -158,7 +159,7 @@ fn image_size_check(path: String) -> bool {
     true
 }
 
-fn get_files(path: String) -> Vec<walkdir::DirEntry> {
+fn get_files(path: PathBuf) -> Vec<walkdir::DirEntry> {
     // lists all files excluding directories
     let mut files: Vec<walkdir::DirEntry> = Vec::new();
     for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
