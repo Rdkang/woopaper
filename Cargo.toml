@@ -1,7 +1,9 @@
 [package]
 name = "woopaper"
-version = "0.9.3"
+version = "1.0.0"
 edition = "2021"
+authors = ["rdkang"]
+description = "A blazing fast opinionated wallpaper program"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
