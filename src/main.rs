@@ -78,21 +78,14 @@ impl Default for ConfyConfig {
 }
 
 fn get_config() -> ConfyConfig {
-    // confy::load("woopaper", None).unwrap()
-    confy::load("woopaper", None).unwrap_or_else(|e| match e {
-        confy::ConfyError::SerializeTomlError(_) => {
-            println!("Error: No config file found, creating one");
-            let config = ConfyConfig::default();
-            confy::store("woopaper", None, &config).unwrap();
-            config
-        }
+    confy::load("woopaper", "config").unwrap_or_else(|e| match e {
         confy::ConfyError::BadTomlData(_) => {
             println!("Bad toml data");
             let config = ConfyConfig::default();
-            confy::store("woopaper", None, &config).unwrap();
+            confy::store("woopaper", "config", &config).unwrap();
             config
         }
-        _ => panic!("Error: {}", e),
+        _ => panic!("Error getting config file: {}", e),
     })
 }
 
