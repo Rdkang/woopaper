@@ -45,8 +45,15 @@ will set a random wallpaper
 ```bash
 woopaper wallpaper random
 ```
-
+## Configuration
 By default, the program will use the `~/Pictures/Wallpapers/` directory to get wallpapers. You can change this in config file at `~/.config/woopaper/config.toml`
+The default config file is stored in `~/.config/woopaper/config.toml`
+the following options:
+- `path` (path) : path to where want the program get it's wallpapers
+- `height` (integer) : the minimum height of the wallpaper image, otherwise will be skipped
+- `width` (integer) : the minimum width of the wallpaper image, otherwise will be skipped
+- `notify_problem` (boolean) : if the program will show a notification when the image doesn't meet the minimum size requirements. **false** will just skip that image and try the next one
+
 
 ## Features
 
