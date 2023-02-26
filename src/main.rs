@@ -12,6 +12,10 @@ use std::fmt;
 use std::path::Path;
 use std::process::Command;
 use walkdir::WalkDir;
+extern crate confy;
+
+#[macro_use]
+extern crate serde_derive;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -54,6 +58,44 @@ enum OpenChoices {
     /// Opens image in default image viewer
     Viewer,
 }
+#[derive(Debug, Serialize, Deserialize)]
+struct ConfyConfig {
+    path: String,
+    height: usize,
+    width: usize,
+    notify_problem: bool,
+}
+
+impl Default for ConfyConfig {
+    fn default() -> Self {
+        ConfyConfig {
+            path: "~/Pictures/Wallpapers".to_string(),
+            width: 1920,
+            height: 1080,
+            notify_problem: false,
+        }
+    }
+}
+
+fn get_config() -> ConfyConfig {
+    // confy::load("woopaper", None).unwrap()
+    confy::load("woopaper", None).unwrap_or_else(|e| match e {
+        confy::ConfyError::SerializeTomlError(_) => {
+            println!("Error: No config file found, creating one");
+            let config = ConfyConfig::default();
+            confy::store("woopaper", None, &config).unwrap();
+            config
+        }
+        confy::ConfyError::BadTomlData(_) => {
+            println!("Bad toml data");
+            let config = ConfyConfig::default();
+            confy::store("woopaper", None, &config).unwrap();
+            config
+        }
+        _ => panic!("Error: {}", e),
+    })
+}
+
 fn main() {
     print(get_wallpaper().magenta());
 

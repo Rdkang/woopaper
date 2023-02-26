@@ -14,3 +14,6 @@ trash = "3.0.0"
 notify-rust = { version = "4.7", features = ["images"] }
 clap = { version = "4", features = ["derive"] }
 imagesize = "0.11.0"
+confy = "0.5.1"
+serde_derive = "1.0.152"
+serde = "1.0.152"
