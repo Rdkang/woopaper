@@ -108,16 +108,16 @@ fn main() {
 }
 
 fn get_path() -> String {
-    "/home/rdkang/Pictures/Wallpapers/".to_string()
+    get_config().path
 }
 
 fn set_random() {
-    // TODO: add config file
-    let width: usize = 1920;
-    let height: usize = 1080;
+    // is a vector of random files
     let files_random = get_random(get_files(get_path()), 1);
 
-    if image_size_check(files_random[0].path().display().to_string(), width, height, false) {
+    // if file meets minimum requirements then will set it as wallpaper otherwise will recursion
+    // and call it self and retry
+    if image_size_check(files_random[0].path().display().to_string()) {
         set_wallpaper(&files_random[0]);
         set_wallpaper_mode(WallpaperMode::Zoom);
     } else {
@@ -125,21 +125,20 @@ fn set_random() {
     }
 }
 
-// TODO: notify_problem to user config
-fn image_size_check(path: String, width_min: usize, height_min: usize, notify_problem: bool) -> bool {
+fn image_size_check(path: String) -> bool {
     let path_temp = path.clone();
     let (width, height) = match size(path) {
         Ok(dim) => (dim.width, dim.height),
         Err(why) => panic!("Error getting image size: {why}"),
     };
 
-    let message = if width <= width_min {
+    let message = if width <= get_config().width {
         format!(
             "<b>{}</b> in <b>{}</b> Width is too small",
             get_filename(path_temp.clone()),
             get_parent_folder(path_temp.clone())
         )
-    } else if height <= height_min {
+    } else if height <= get_config().height {
         format!(
             "<b>{}</b> in <b>{}</b> Height is too small",
             get_filename(path_temp.clone()),
@@ -149,7 +148,9 @@ fn image_size_check(path: String, width_min: usize, height_min: usize, notify_pr
         format!("good")
     };
 
-    if message != "good" && notify_problem {
+    // if user wants to notify that image doesn't meet minium size then will show a notification of
+    // the problem otherwise will be silent
+    if message != "good" && get_config().notify_problem {
         notify(&message, &path_temp);
         print(message.yellow());
         return false;
