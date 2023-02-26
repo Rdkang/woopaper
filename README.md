@@ -46,9 +46,7 @@ will set a random wallpaper
 woopaper wallpaper random
 ```
 
-By default, the program will use the `~/Pictures/Wallpapers/` directory to store wallpapers. You can change this directory by modifying the `WALLPAPER_DIR` constant in the `src/main.rs` file.*
-
-**todo: will be possible to set this in a config file*
+By default, the program will use the `~/Pictures/Wallpapers/` directory to get wallpapers. You can change this in config file at `~/.config/woopaper/config.toml`
 
 ## Features
 
@@ -66,6 +64,7 @@ By default, the program will use the `~/Pictures/Wallpapers/` directory to store
 - [x] DONE: trash
 - [x] DONE: sxiv
 - [x] DONE: notifications
+- [x] DONE: config file
 
 ## 🎉 Acknowledgements
 
