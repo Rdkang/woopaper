@@ -56,6 +56,7 @@ The wallpaper subcommand allows you to change the wallpaper and perform other ac
 - `random`: Sets a random wallpaper from the wallpaper directory.
 - `status`: Shows the current wallpaper and its file path.
 - `trash`: Moves the current wallpaper to the trash directory.
+- `fzf`: allows you to interactively choose the wallpaper using fzf (using skim)
 
 Example usage:
 
@@ -79,11 +80,11 @@ the following options:
 
 ### Roadmap
 - [ ] TODO: favorite wallpapers
-- [ ] TODO: fuzzy find through wallpapers
-- [ ] TODO: fuzzy through wallpapers
+- [ ] TODO: fuzzy through favorite wallpapers
 - [ ] TODO: set wallpaper by given path
 - [ ] TODO: open 20 wallpapers in sxiv to be set
 - [ ] TODO: set wallpaper from given path
+- [x] TODO: fuzzy find through wallpapers
 - [x] DONE: file manager
 - [x] DONE: random
 - [x] DONE: trash
