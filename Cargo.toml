@@ -1,6 +1,6 @@
 [package]
 name = "woopaper"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 authors = ["rdkang"]
 description = "A blazing fast opinionated wallpaper program"
