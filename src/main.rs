@@ -8,11 +8,14 @@ use imagesize::size;
 use notify_rust::Notification;
 use opener::open;
 use rand::seq::SliceRandom;
+use std::ffi::OsStr;
 use std::fmt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use walkdir::WalkDir;
 extern crate confy;
+use skim::prelude::*;
+use std::io::Cursor;
 
 #[macro_use]
 extern crate serde_derive;
@@ -46,6 +49,8 @@ enum WallpaperChoices {
     Status,
     /// Puts current wallpaper in the trash
     Trash,
+    /// Shows all wallpapers in a fzf for you to choose
+    Fzf,
 }
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
@@ -99,6 +104,7 @@ fn main() {
             WallpaperChoices::Random => set_random(),
             WallpaperChoices::Status => notify_current(),
             WallpaperChoices::Trash => trash_file(get_wallpaper()),
+            WallpaperChoices::Fzf => fuzzy(),
         },
         Choice::Open { option } => match option {
             OpenChoices::Manager => open_in_file_manger(get_wallpaper()),
@@ -163,8 +169,14 @@ fn get_files(path: PathBuf) -> Vec<walkdir::DirEntry> {
     // lists all files excluding directories
     let mut files: Vec<walkdir::DirEntry> = Vec::new();
     for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
+fn get_files_string() -> String {
+    let mut files = String::new();
+    for file in WalkDir::new(get_config().path).into_iter().filter_map(|file| file.ok()) {
         if file.metadata().unwrap().is_file() {
-            files.push(file);
+            if file.path().has_extension(&["png", "jpg", "jpeg", "gif", "bmp"]) {
+                // pushes the file name with a new line appened to the files String
+                files.push_str(&format!("{}\n", &file.path().display().to_string()));
+            }
         }
     }
     files
@@ -329,4 +341,40 @@ fn notify(body: &str, image: &str) {
             "open" => open_file(image.to_string()),
             _ => (),
         });
+}
+
+fn fuzzy() {
+    // TODO: preview wallpaper
+    let options = SkimOptionsBuilder::default()
+        .prompt(Some("Woopaper > "))
+        .header(Some("choose wallpaper"))
+        .height(Some("30%"))
+        .multi(false)
+        .reverse(true)
+        .nosort(true)
+        .build()
+        .unwrap();
+
+    let items = SkimItemReader::default().of_bufread(Cursor::new(get_files_string()));
+
+    let selected_files = Skim::run_with(&options, Some(items))
+        .map(|out| out.selected_items)
+        .unwrap_or_else(|| Vec::new());
+    let file = selected_files.iter().last().unwrap().output().to_string();
+    set_wallpaper(Path::new(&file).to_path_buf());
+}
+
+// allows to check if file is one of several extensions
+pub trait FileExtension {
+    fn has_extension<S: AsRef<str>>(&self, extensions: &[S]) -> bool;
+}
+
+impl<P: AsRef<Path>> FileExtension for P {
+    fn has_extension<S: AsRef<str>>(&self, extensions: &[S]) -> bool {
+        if let Some(ref extension) = self.as_ref().extension().and_then(OsStr::to_str) {
+            return extensions.iter().any(|x| x.as_ref().eq_ignore_ascii_case(extension));
+        }
+
+        false
+    }
 }
