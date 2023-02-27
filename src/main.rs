@@ -167,6 +167,7 @@ fn get_files(path: PathBuf) -> Vec<walkdir::DirEntry> {
     // lists all files excluding directories
     let mut files: Vec<walkdir::DirEntry> = Vec::new();
     for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
+
 fn get_files_string() -> String {
     let mut files = String::new();
     for file in WalkDir::new(get_config().path).into_iter().filter_map(|file| file.ok()) {
@@ -206,13 +207,13 @@ fn print(text: ColoredString) {
     println!("{text}");
 }
 
-fn set_wallpaper(path: &walkdir::DirEntry) {
+fn set_wallpaper(path: PathBuf) {
     Command::new("gsettings")
         .args([
             "set",
             "org.gnome.desktop.background",
             "picture-uri-dark",
-            &path.path().display().to_string(),
+            &path.to_string_lossy(),
         ])
         .output()
         .unwrap();
@@ -221,7 +222,7 @@ fn set_wallpaper(path: &walkdir::DirEntry) {
             "set",
             "org.gnome.desktop.background",
             "picture-uri",
-            &path.path().display().to_string(),
+            &path.to_string_lossy(),
         ])
         .output()
         .unwrap();
