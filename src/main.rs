@@ -118,12 +118,12 @@ fn get_path() -> PathBuf {
 
 fn set_random() {
     // is a vector of random files
-    let files_random = get_random(get_files(get_path()), 1);
+    let files_random = get_random(get_files(), 1);
 
     // if file meets minimum requirements then will set it as wallpaper otherwise will recursion
     // and call it self and retry
     if image_size_check(files_random[0].path().display().to_string()) {
-        set_wallpaper(&files_random[0]);
+        set_wallpaper(PathBuf::from(files_random[0].path().display().to_string()));
         set_wallpaper_mode(WallpaperMode::Zoom);
     } else {
         set_random();
@@ -163,10 +163,18 @@ fn image_size_check(path: String) -> bool {
     true
 }
 
-fn get_files(path: PathBuf) -> Vec<walkdir::DirEntry> {
+fn get_files() -> Vec<walkdir::DirEntry> {
     // lists all files excluding directories
     let mut files: Vec<walkdir::DirEntry> = Vec::new();
-    for file in WalkDir::new(path).into_iter().filter_map(|file| file.ok()) {
+    for file in WalkDir::new(get_config().path).into_iter().filter_map(|file| file.ok()) {
+        if file.metadata().unwrap().is_file() {
+            if file.path().has_extension(&["png", "jpg", "jpeg", "gif", "bmp"]) {
+                files.push(file);
+            }
+        }
+    }
+    files
+}
 
 fn get_files_string() -> String {
     let mut files = String::new();
