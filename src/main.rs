@@ -96,8 +96,6 @@ fn get_config() -> ConfyConfig {
 }
 
 fn main() {
-    print(get_wallpaper().magenta());
-
     let arguments = Cli::parse();
     match arguments.command {
         Choice::Wallpaper { option } => match option {
