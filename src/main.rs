@@ -344,13 +344,15 @@ fn notify(body: &str, image: &str) {
         .image_path(image)
         .action("trash", "Put image in trash")
         .action("manager", "Open in file manager")
-        .action("open", "Open in image viewer")
+        // .action("open", "Open in image viewer")
+        .action("favorite", "Add to favorites")
         .show()
         .unwrap()
         .wait_for_action(|action| match action {
             "trash" => trash_file(image.to_string()),
             "manager" => open_in_file_manger(image.to_string()),
             "open" => open_file(image.to_string()),
+            "favorite" => favorite(image.to_string()),
             _ => (),
         });
 }
