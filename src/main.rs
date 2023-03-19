@@ -10,12 +10,14 @@ use opener::open;
 use rand::seq::SliceRandom;
 use std::ffi::OsStr;
 use std::fmt;
+use std::fs::OpenOptions;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use walkdir::WalkDir;
 extern crate confy;
 use skim::prelude::*;
 use std::io::Cursor;
+use std::io::Write;
 
 #[macro_use]
 extern crate serde_derive;
@@ -51,6 +53,8 @@ enum WallpaperChoices {
     Trash,
     /// Shows all wallpapers in a fzf for you to choose
     Fzf,
+    /// Adds the current wallpaper to favorite list
+    Favorite,
 }
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
@@ -103,6 +107,7 @@ fn main() {
             WallpaperChoices::Status => notify_current(),
             WallpaperChoices::Trash => trash_file(get_wallpaper()),
             WallpaperChoices::Fzf => fuzzy(),
+            WallpaperChoices::Favorite => favorite(get_wallpaper()),
         },
         Choice::Open { option } => match option {
             OpenChoices::Manager => open_in_file_manger(get_wallpaper()),
@@ -383,5 +388,17 @@ impl<P: AsRef<Path>> FileExtension for P {
         }
 
         false
+    }
+}
+
+fn favorite(file: String) {
+    let file_path = confy::get_configuration_file_path("woopaper", "config")
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("favorites.txt");
+    let mut file_text = OpenOptions::new().append(true).open(file_path).unwrap();
+    if let Err(e) = writeln!(file_text, "{}", file) {
+        eprintln!("Couldn't write to file: {}", e);
     }
 }
