@@ -399,8 +399,11 @@ fn favorite(file: String) {
         .parent()
         .unwrap()
         .join("favorites.txt");
-    let mut file_text = OpenOptions::new().append(true).open(file_path).unwrap();
+
+    // creates a file for appending wallpaper path to
+    let mut file_text = OpenOptions::new().create(true).append(true).open(file_path).unwrap();
     if let Err(e) = writeln!(file_text, "{}", file) {
         eprintln!("Couldn't write to file: {}", e);
     }
 }
+
