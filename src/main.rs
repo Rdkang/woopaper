@@ -398,12 +398,7 @@ impl<P: AsRef<Path>> FileExtension for P {
 }
 
 fn favorite(wallpaper: String) {
-    let file_path = confy::get_configuration_file_path("woopaper", "config")
-        .unwrap()
-        .parent()
-        .unwrap()
-        .join("favorites.txt");
-
+    let file_path = get_favorite_path();
     // creates a file for appending wallpaper path too
     let mut file = OpenOptions::new()
         .create(true)
@@ -411,12 +406,21 @@ fn favorite(wallpaper: String) {
         .open(file_path.clone())
         .unwrap();
 
+    // writes file and prints if successful or not
     match writeln!(file, "{}", wallpaper) {
         Ok(_okcode) => print(format!("Successfully favourited \"{}\"", wallpaper).green()),
         Err(error) => eprintln!("Problem in writing favorite: {}", error),
     }
     file.sync_all().unwrap();
     deduplicate_file(file_path.to_path_buf());
+}
+
+fn get_favorite_path() -> PathBuf {
+    confy::get_configuration_file_path("woopaper", "config")
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("favorites.txt")
 }
 
 fn deduplicate_file(file_path: PathBuf) {
@@ -435,8 +439,7 @@ fn deduplicate_file(file_path: PathBuf) {
 }
 
 fn fuzzy_favorites() {
-    // FIX: use confy varible for path instead of hardcoded
-    let text: String = read_to_string("/home/rdkang/.config/woopaper/favorites.txt").unwrap();
+    let favorite_file = read_to_string(get_favorite_path().to_str().unwrap()).unwrap();
 
     let options = SkimOptionsBuilder::default()
         .prompt(Some("Woopaper > "))
@@ -447,7 +450,7 @@ fn fuzzy_favorites() {
         .build()
         .unwrap();
 
-    let items = SkimItemReader::default().of_bufread(Cursor::new(text));
+    let items = SkimItemReader::default().of_bufread(Cursor::new(favorite_file));
     let selected_files = Skim::run_with(&options, Some(items))
         .map(|out| out.selected_items)
         .unwrap_or_else(|| Vec::new());
