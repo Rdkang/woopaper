@@ -396,22 +396,25 @@ impl<P: AsRef<Path>> FileExtension for P {
     }
 }
 
-fn favorite(file: String) {
+fn favorite(wallpaper: String) {
     let file_path = confy::get_configuration_file_path("woopaper", "config")
         .unwrap()
         .parent()
         .unwrap()
         .join("favorites.txt");
 
-    // creates a file for appending wallpaper path to
-    let mut file_text = OpenOptions::new().create(true).append(true).open(file_path).unwrap();
-    if let Err(e) = writeln!(file_text, "{}", file) {
-        eprintln!("Couldn't write to file: {}", e);
-    }
-    match writeln!(file_text, "{}", file) {
-        Ok(_okcode) => print(format!("Successfully favourited \"{}\"", file).green()),
+    // creates a file for appending wallpaper path too
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(file_path.clone())
+        .unwrap();
+
+    match writeln!(file, "{}", wallpaper) {
+        Ok(_okcode) => print(format!("Successfully favourited \"{}\"", wallpaper).green()),
         Err(error) => eprintln!("Problem in writing favorite: {}", error),
     }
+    file.sync_all().unwrap();
 }
 
 // TODO: hide duplicates
