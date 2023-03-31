@@ -405,5 +405,9 @@ fn favorite(file: String) {
     if let Err(e) = writeln!(file_text, "{}", file) {
         eprintln!("Couldn't write to file: {}", e);
     }
+    match writeln!(file_text, "{}", file) {
+        Ok(okcode) => print(format!("Successfully favourited \"{}\"", file).green()),
+        Err(error) => eprintln!("Problem in writing favorite: {}", error),
+    }
 }
 
