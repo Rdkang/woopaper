@@ -79,12 +79,11 @@ the following options:
 - Notification with current wallpaper and can click on it for common actions such as [trash,open in file manager, open in image viewer]
 
 ### Roadmap
-- [ ] TODO: favorite wallpapers
-- [ ] TODO: fuzzy through favorite wallpapers
 - [ ] TODO: set wallpaper by given path
 - [ ] TODO: open 20 wallpapers in sxiv to be set
-- [ ] TODO: set wallpaper from given path
-- [x] TODO: fuzzy find through wallpapers
+- [x] DONE: favorite wallpapers
+- [x] DONE: fuzzy through favorite wallpapers
+- [x] DONE: fuzzy find through wallpapers
 - [x] DONE: file manager
 - [x] DONE: random
 - [x] DONE: trash
