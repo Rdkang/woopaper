@@ -10,7 +10,7 @@ use opener::open;
 use rand::seq::SliceRandom;
 use std::ffi::OsStr;
 use std::fmt;
-use std::fs::OpenOptions;
+use std::fs::{read_to_string, OpenOptions};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use walkdir::WalkDir;
@@ -55,6 +55,8 @@ enum WallpaperChoices {
     Fzf,
     /// Adds the current wallpaper to favorite list
     Favorite,
+    /// Fuzzy find through all favorited wallpapers and set it as wallpaper
+    FzfFavorite,
 }
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
@@ -108,6 +110,7 @@ fn main() {
             WallpaperChoices::Trash => trash_file(get_wallpaper()),
             WallpaperChoices::Fzf => fuzzy(),
             WallpaperChoices::Favorite => favorite(get_wallpaper()),
+            WallpaperChoices::FzfFavorite => fuzzy_favorites(),
         },
         Choice::Open { option } => match option {
             OpenChoices::Manager => open_in_file_manger(get_wallpaper()),
@@ -406,8 +409,29 @@ fn favorite(file: String) {
         eprintln!("Couldn't write to file: {}", e);
     }
     match writeln!(file_text, "{}", file) {
-        Ok(okcode) => print(format!("Successfully favourited \"{}\"", file).green()),
+        Ok(_okcode) => print(format!("Successfully favourited \"{}\"", file).green()),
         Err(error) => eprintln!("Problem in writing favorite: {}", error),
     }
 }
 
+// TODO: hide duplicates
+fn fuzzy_favorites() {
+    // FIX: use confy varible for path instead of hardcoded
+    let text: String = read_to_string("/home/rdkang/.config/woopaper/favorites.txt").unwrap();
+
+    let options = SkimOptionsBuilder::default()
+        .prompt(Some("Woopaper > "))
+        .height(Some("30%"))
+        .multi(false)
+        .reverse(true)
+        .nosort(true)
+        .build()
+        .unwrap();
+
+    let items = SkimItemReader::default().of_bufread(Cursor::new(text));
+    let selected_files = Skim::run_with(&options, Some(items))
+        .map(|out| out.selected_items)
+        .unwrap_or_else(|| Vec::new());
+    let file = selected_files.iter().last().unwrap().output().to_string();
+    set_wallpaper(Path::new(&file).to_path_buf());
+}
