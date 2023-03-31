@@ -8,16 +8,17 @@ use imagesize::size;
 use notify_rust::Notification;
 use opener::open;
 use rand::seq::SliceRandom;
+use std::collections::BTreeSet;
 use std::ffi::OsStr;
 use std::fmt;
-use std::fs::{read_to_string, OpenOptions};
+use std::fs::{read_to_string, File, OpenOptions};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use walkdir::WalkDir;
 extern crate confy;
 use skim::prelude::*;
-use std::io::Cursor;
-use std::io::Write;
+use std::io::{BufRead, Write};
+use std::io::{BufReader, Cursor};
 
 #[macro_use]
 extern crate serde_derive;
@@ -415,9 +416,24 @@ fn favorite(wallpaper: String) {
         Err(error) => eprintln!("Problem in writing favorite: {}", error),
     }
     file.sync_all().unwrap();
+    deduplicate_file(file_path.to_path_buf());
 }
 
-// TODO: hide duplicates
+fn deduplicate_file(file_path: PathBuf) {
+    let file = File::open(file_path.clone()).expect("file error");
+    let reader = BufReader::new(file);
+
+    let lines: BTreeSet<_> = reader.lines().map(|l| l.expect("Couldn't read a line")).collect();
+
+    let mut file = File::create(file_path).expect("file error");
+
+    for line in lines {
+        file.write_all(line.as_bytes()).expect("Couldn't write to file");
+
+        file.write_all(b"\n").expect("Couldn't write to file");
+    }
+}
+
 fn fuzzy_favorites() {
     // FIX: use confy varible for path instead of hardcoded
     let text: String = read_to_string("/home/rdkang/.config/woopaper/favorites.txt").unwrap();
