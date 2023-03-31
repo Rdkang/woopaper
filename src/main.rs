@@ -162,7 +162,7 @@ fn image_size_check(path: String) -> bool {
         format!("good")
     };
 
-    // if user wants to notify that image doesn't meet minium size then will show a notification of
+    // if user wants to notify that image doesn't meet minimum size then will show a notification of
     // the problem otherwise will be silent
     if message != "good" && get_config().notify_problem {
         notify(&message, &path_temp);
@@ -190,7 +190,7 @@ fn get_files_string() -> String {
     for file in WalkDir::new(get_config().path).into_iter().filter_map(|file| file.ok()) {
         if file.metadata().unwrap().is_file() {
             if file.path().has_extension(&["png", "jpg", "jpeg", "gif", "bmp"]) {
-                // pushes the file name with a new line appened to the files String
+                // pushes the file name with a new line appended to the files String
                 files.push_str(&format!("{}\n", &file.path().display().to_string()));
             }
         }
