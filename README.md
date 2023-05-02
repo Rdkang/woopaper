@@ -23,7 +23,7 @@ Once Rust is installed, you can download and compile the woopaper program by clo
 ```bash
 git clone https://github.com/Rdkang/woopaper
 ```
-- This will compile the wooclock program and create an executable file in the `target/release` directory. and could can put in your chosen location and run like any other program.
+- This will compile the wooclock program and create an executable file in the `target/release` directory. And could can put in your chosen location and run like any other program.
 ```bash
 cargo build --release
 ```
@@ -44,7 +44,7 @@ The open subcommand allows you to open the current wallpaper in a specified imag
 
 Example usage:
 
-will open the current wallpaper in your default file manager so that you can do what you want with it
+Will open the current wallpaper in your default file manager so that you can do what you want with it
 ```bash
 woopaper open manager
 ```
@@ -60,7 +60,7 @@ The wallpaper subcommand allows you to change the wallpaper and perform other ac
 
 Example usage:
 
-will set a random wallpaper
+Will set a random wallpaper
 ```bash
 woopaper wallpaper random
 ```
@@ -81,6 +81,7 @@ the following options:
 ### Roadmap
 - [ ] TODO: set wallpaper by given path
 - [ ] TODO: open 20 wallpapers in sxiv to be set
+- [ ] TODO: make some of the notifications automatically disappear
 - [x] DONE: favorite wallpapers
 - [x] DONE: fuzzy through favorite wallpapers
 - [x] DONE: fuzzy find through wallpapers
