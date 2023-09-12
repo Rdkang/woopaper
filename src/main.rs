@@ -16,6 +16,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use walkdir::WalkDir;
 extern crate confy;
+use flexi_logger::{Duplicate, FileSpec, Logger};
 use skim::prelude::*;
 use std::io::{BufRead, Write};
 use std::io::{BufReader, Cursor};
@@ -103,6 +104,15 @@ fn get_config() -> ConfyConfig {
 }
 
 fn main() {
+    let _logger = Logger::try_with_str("info")
+        .unwrap()
+        .log_to_file(FileSpec::default().directory("logs")) // write logs to file
+        .duplicate_to_stderr(Duplicate::Warn) // print warnings and errors also to the console
+        .create_symlink("current_log.log")
+        .start();
+
+    log::error!("difficulty changing wallpaper woopaper");
+
     let arguments = Cli::parse();
     match arguments.command {
         Choice::Wallpaper { option } => match option {
