@@ -106,12 +106,11 @@ fn get_config() -> ConfyConfig {
 fn main() {
     let _logger = Logger::try_with_str("info")
         .unwrap()
+        // FIX: a fixed logs folder
         .log_to_file(FileSpec::default().directory("logs")) // write logs to file
         .duplicate_to_stderr(Duplicate::Warn) // print warnings and errors also to the console
         .create_symlink("current_log.log")
         .start();
-
-    log::error!("difficulty changing wallpaper woopaper");
 
     let arguments = Cli::parse();
     match arguments.command {
@@ -153,7 +152,10 @@ fn image_size_check(path: String) -> bool {
     let path_temp = path.clone();
     let (width, height) = match size(path) {
         Ok(dim) => (dim.width, dim.height),
-        Err(why) => panic!("Error getting image size: {why}"),
+        Err(why) => {
+            log::warn!("Error getting image size: {why} for {path_temp}");
+            panic!("Error getting image size: {why}")
+        }
     };
 
     let message = if width <= get_config().width {
