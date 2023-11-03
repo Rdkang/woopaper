@@ -237,24 +237,32 @@ fn print(text: ColoredString) {
 }
 
 fn set_wallpaper(path: PathBuf) {
-    Command::new("gsettings")
-        .args([
-            "set",
-            "org.gnome.desktop.background",
-            "picture-uri-dark",
-            &path.to_string_lossy(),
-        ])
-        .output()
-        .unwrap();
-    Command::new("gsettings")
-        .args([
-            "set",
-            "org.gnome.desktop.background",
-            "picture-uri",
-            &path.to_string_lossy(),
-        ])
-        .output()
-        .unwrap();
+    match get_desktop_environment() {
+        DesktopEnvironment::Gnome => {
+            Command::new("gsettings")
+                .args([
+                    "set",
+                    "org.gnome.desktop.background",
+                    "picture-uri-dark",
+                    &path.to_string_lossy(),
+                ])
+                .output()
+                .unwrap();
+            Command::new("gsettings")
+                .args([
+                    "set",
+                    "org.gnome.desktop.background",
+                    "picture-uri",
+                    &path.to_string_lossy(),
+                ])
+                .output()
+                .unwrap();
+        }
+        DesktopEnvironment::Kde => {
+            // TODO: set wallpaper. jsut use wallpaper.rs
+        }
+        DesktopEnvironment::Other => panic!("Cannot recognise desktop environment"),
+    }
 }
 
 fn get_wallpaper() -> String {
