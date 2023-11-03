@@ -171,7 +171,7 @@ fn image_size_check(path: String) -> bool {
             get_parent_folder(path_temp.clone())
         )
     } else {
-        format!("good")
+        "good".to_string()
     };
 
     // if user wants to notify that image doesn't meet minimum size then will show a notification of
@@ -468,4 +468,20 @@ fn fuzzy_favorites() {
         .unwrap_or_else(|| Vec::new());
     let file = selected_files.iter().last().unwrap().output().to_string();
     set_wallpaper(Path::new(&file).to_path_buf());
+}
+
+#[derive(Debug)]
+enum DesktopEnvironment {
+    Kde,
+    Gnome,
+    Other,
+}
+
+fn get_desktop_environment() -> DesktopEnvironment {
+    let desktop_environment = std::env::var("XDG_CURRENT_DESKTOP").unwrap();
+    match desktop_environment.as_str() {
+        "KDE" => DesktopEnvironment::Kde,
+        "GNOME" => DesktopEnvironment::Gnome,
+        _ => DesktopEnvironment::Other,
+    }
 }
