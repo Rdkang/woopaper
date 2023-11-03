@@ -144,8 +144,8 @@ fn set_random() {
     // if file meets minimum requirements then will set it as wallpaper otherwise will recursion
     // and call it self and retry
     if image_size_check(files_random[0].path().display().to_string()) {
-        set_wallpaper(PathBuf::from(files_random[0].path().display().to_string()));
-        set_wallpaper_mode(WallpaperMode::Zoom);
+        wallpaper::set_from_path(&PathBuf::from(files_random[0].path()).display().to_string()).unwrap();
+        wallpaper::set_mode(wallpaper::Mode::Crop).unwrap();
     } else {
         set_random();
     }
@@ -219,6 +219,7 @@ fn get_random(files: Vec<walkdir::DirEntry>, num: usize) -> Vec<walkdir::DirEntr
 }
 
 fn open_in_file_manger(file: String) {
+    // FIX: make it work with other file managers
     Command::new("nautilus").args([file]).output().unwrap();
 }
 
@@ -239,47 +240,8 @@ fn print(text: ColoredString) {
     println!("{text}");
 }
 
-fn set_wallpaper(path: PathBuf) {
-    match get_desktop_environment() {
-        DesktopEnvironment::Gnome => {
-            Command::new("gsettings")
-                .args([
-                    "set",
-                    "org.gnome.desktop.background",
-                    "picture-uri-dark",
-                    &path.to_string_lossy(),
-                ])
-                .output()
-                .unwrap();
-            Command::new("gsettings")
-                .args([
-                    "set",
-                    "org.gnome.desktop.background",
-                    "picture-uri",
-                    &path.to_string_lossy(),
-                ])
-                .output()
-                .unwrap();
-        }
-        DesktopEnvironment::Kde => {
-            // TODO: set wallpaper. jsut use wallpaper.rs
-        }
-        DesktopEnvironment::Other => panic!("Cannot recognise desktop environment"),
-    }
-}
-
 fn get_wallpaper() -> String {
-    let current_wallpaper = Command::new("gsettings")
-        .args(["get", "org.gnome.desktop.background", "picture-uri-dark"])
-        .output()
-        .unwrap();
-    String::from_utf8_lossy(&current_wallpaper.stdout)
-        .trim()
-        .strip_suffix('\'')
-        .unwrap()
-        .strip_prefix('\'')
-        .unwrap()
-        .to_string()
+    return wallpaper::get().unwrap();
 }
 
 fn get_filename(path: String) -> String {
@@ -325,18 +287,6 @@ impl fmt::Display for WallpaperMode {
             WallpaperMode::Spanned => write!(f, "spanned"),
         }
     }
-}
-
-fn set_wallpaper_mode(mode: WallpaperMode) {
-    Command::new("gsettings")
-        .args([
-            "set",
-            "org.gnome.desktop.background ",
-            "picture-options",
-            &mode.to_string(),
-        ])
-        .output()
-        .unwrap();
 }
 
 fn open_file(file: String) {
@@ -402,7 +352,8 @@ fn fuzzy() {
         .map(|out| out.selected_items)
         .unwrap_or_else(|| Vec::new());
     let file = selected_files.iter().last().unwrap().output().to_string();
-    set_wallpaper(Path::new(&file).to_path_buf());
+    // set_wallpaper(Path::new(&file).to_path_buf());
+    wallpaper::set_from_path(&Path::new(&file).to_path_buf().display().to_string()).unwrap();
 }
 
 // allows to check if file is one of several extensions
@@ -478,21 +429,5 @@ fn fuzzy_favorites() {
         .map(|out| out.selected_items)
         .unwrap_or_else(|| Vec::new());
     let file = selected_files.iter().last().unwrap().output().to_string();
-    set_wallpaper(Path::new(&file).to_path_buf());
-}
-
-#[derive(Debug)]
-enum DesktopEnvironment {
-    Kde,
-    Gnome,
-    Other,
-}
-
-fn get_desktop_environment() -> DesktopEnvironment {
-    let desktop_environment = std::env::var("XDG_CURRENT_DESKTOP").unwrap();
-    match desktop_environment.as_str() {
-        "KDE" => DesktopEnvironment::Kde,
-        "GNOME" => DesktopEnvironment::Gnome,
-        _ => DesktopEnvironment::Other,
-    }
+    wallpaper::set_from_path(&Path::new(&file).to_path_buf().display().to_string()).unwrap();
 }
