@@ -116,7 +116,10 @@ fn main() {
     match arguments.command {
         Choice::Wallpaper { option } => match option {
             WallpaperChoices::Random => set_random(),
-            WallpaperChoices::Status => notify_current(),
+            WallpaperChoices::Status => {
+                print(get_wallpaper().yellow());
+                notify_current()
+            }
             WallpaperChoices::Trash => trash_file(get_wallpaper()),
             WallpaperChoices::Fzf => fuzzy(),
             WallpaperChoices::Favorite => favorite(get_wallpaper()),
