@@ -104,6 +104,7 @@ fn get_config() -> ConfyConfig {
 }
 
 fn main() {
+    // print()
     let _logger = Logger::try_with_str("info")
         .unwrap()
         // FIX: a fixed logs folder
