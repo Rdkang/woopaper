@@ -9,7 +9,7 @@ repository = "https://github.com/Rdkang/woopaper"
 [dependencies]
 walkdir = "2.3.2"
 rand = "0.8.5"
-opener = "0.6.1"
+opener = "0.7.1"
 colored = "2"
 trash = "4.0.0"
 notify-rust = { version = "4.7", features = ["images"] }
