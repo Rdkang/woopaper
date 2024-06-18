@@ -14,7 +14,7 @@ colored = "2"
 trash = "4.0.0"
 notify-rust = { version = "4.7", features = ["images"] }
 clap = { version = "4", features = ["derive"] }
-imagesize = "0.12.0"
+imagesize = "0.13.0"
 confy = "0.6.1"
 serde_derive = "1.0.152"
 serde = "1.0.152"
