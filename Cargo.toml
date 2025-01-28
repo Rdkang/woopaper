@@ -8,7 +8,7 @@ repository = "https://github.com/Rdkang/woopaper"
 
 [dependencies]
 walkdir = "2.3.2"
-rand = "0.8.5"
+rand = "0.9.0"
 opener = "0.7.1"
 colored = "2"
 trash = "5.0.0"
